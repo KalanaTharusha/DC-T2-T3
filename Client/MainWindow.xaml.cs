@@ -20,6 +20,7 @@ using System.Xml.Linq;
 using System.Drawing;
 using System.Windows.Interop;
 using ServerInterface;
+using System.IO;
 
 namespace Client
 {
@@ -51,7 +52,7 @@ namespace Client
             string fName = "", lName = "";
             int bal = 0;
             uint acct = 0, pin = 0;
-            Bitmap bitmap = null;
+            String bitmap = null;
 
             try
             {
@@ -90,20 +91,32 @@ namespace Client
 
         }
 
-        private void updateProfilePic(Bitmap bitmap)
+        private void updateProfilePic(String bitmapString)
         {
+            Bitmap bitmap;
+
             this.Dispatcher.Invoke(() =>
             {
                 try
                 {
+                    // Convert base64 string to byte array
+                    byte[] imageBytes = Convert.FromBase64String(bitmapString);
+
+                    // Create a MemoryStream from the byte array
+                    using (MemoryStream memoryStream = new MemoryStream(imageBytes))
+                    {
+                        // Create a Bitmap from the MemoryStream
+                        bitmap = new Bitmap(memoryStream);
+                    }
+
                     ImageSourceConverter converter = new ImageSourceConverter();
                     var pic = Imaging.CreateBitmapSourceFromHBitmap(bitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     profilePic.Source = pic;
                 }
-                finally
+                catch
                 {
-                    bitmap.Dispose();
+                    throw new Exception("Error while decoding the bitmap");
                 }
             });
         }

@@ -25,5 +25,15 @@ namespace DataLibrary
             lastName = "";
             bitmap = null;
         }
+
+        public DataStruct(uint pin, uint acctNo, string firstName, string lastName, int balance, Bitmap bitmap)
+        {
+            this.pin = pin;
+            this.acctNo = acctNo;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.balance = balance;
+            this.bitmap = bitmap;
+        }
     }
 }

@@ -11,17 +11,20 @@ namespace DataLibrary
     {
         readonly List<DataStruct> dataList;
 
+
+
         public Database()
         {
             dataList = new List<DataStruct>();
-            DatabaseGenerator databaseGenerator = new DatabaseGenerator();
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 10; i++)
             {
+                DatabaseGenerator databaseGenerator = new DatabaseGenerator();
+                databaseGenerator.GetNextAccount(out uint pin, out uint accNo, out string firstName, out string lastName, out int balance, out Bitmap bitmap);
 
-                DataStruct data = new DataStruct();
-                databaseGenerator.GetNextAccount(out data.pin, out data.acctNo, out data.firstName, out data.lastName, out data.balance, out data.bitmap);
+                DataStruct data = new DataStruct(pin, accNo, firstName, lastName, balance, bitmap);
                 dataList.Add(data);
+                //Console.WriteLine(data.firstName + " " + data.lastName);
             }
 
         }

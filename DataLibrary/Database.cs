@@ -24,7 +24,6 @@ namespace DataLibrary
 
                 DataStruct data = new DataStruct(pin, accNo, firstName, lastName, balance, bitmap);
                 dataList.Add(data);
-                //Console.WriteLine(data.firstName + " " + data.lastName);
             }
 
         }

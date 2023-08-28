@@ -52,7 +52,7 @@ namespace Client
             string fName = "", lName = "";
             int bal = 0;
             uint acct = 0, pin = 0;
-            String bitmap = null;
+            String bitmapString = null;
 
             try
             {
@@ -61,7 +61,7 @@ namespace Client
                 if (index >= 0 && index < foob.GetNumEntries())
                 {
 
-                    foob.GetValuesForEntry(index, out acct, out pin, out bal, out fName, out lName, out bitmap);
+                    foob.GetValuesForEntry(index, out acct, out pin, out bal, out fName, out lName, out bitmapString);
 
                     fNameBox.Text = fName;
                     lNameBox.Text = lName;
@@ -69,9 +69,9 @@ namespace Client
                     pinBox.Text = pin.ToString("D4");
                     balBox.Text = bal.ToString("C");
 
-                    if (bitmap != null)
+                    if (bitmapString != null)
                     {
-                        updateProfilePic(bitmap);
+                        displayProfilePic(bitmapString);
                     }
 
                 }
@@ -80,9 +80,13 @@ namespace Client
                     throw new Exception("Invalid Index");
                 }
             }
-            catch (FaultException<IndexFault> eex)
+            catch (FaultException<IndexFault> ex)
             {
-                MessageBox.Show(eex.Message);
+                MessageBox.Show(ex.Message);
+            }
+            catch (FaultException<BitmapFault> ex)
+            {
+                MessageBox.Show(ex.Message);
             }
             catch (Exception ex)
             {
@@ -91,7 +95,8 @@ namespace Client
 
         }
 
-        private void updateProfilePic(String bitmapString)
+        // convert base64 string to bitmap and then display it through the UI thread
+        private void displayProfilePic(String bitmapString)
         {
             Bitmap bitmap;
 
@@ -99,13 +104,10 @@ namespace Client
             {
                 try
                 {
-                    // Convert base64 string to byte array
                     byte[] imageBytes = Convert.FromBase64String(bitmapString);
 
-                    // Create a MemoryStream from the byte array
                     using (MemoryStream memoryStream = new MemoryStream(imageBytes))
                     {
-                        // Create a Bitmap from the MemoryStream
                         bitmap = new Bitmap(memoryStream);
                     }
 

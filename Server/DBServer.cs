@@ -26,7 +26,7 @@ namespace Server
             return database.GetNumRecords();
         }
 
-        public void GetValuesForEntry(int index, out uint acctNo, out uint pin, out int bal, out string fName, out string lName, out String bitmap)
+        public void GetValuesForEntry(int index, out uint acctNo, out uint pin, out int bal, out string fName, out string lName, out String bitmapString)
         {
             try
             {
@@ -36,24 +36,27 @@ namespace Server
                 fName = database.GetFirstNameByIndex(index);
                 lName = database.GetLastNameByIndex(index);
 
+                // convert bitmap image into base64 string
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    // Save the Bitmap to the MemoryStream in a specified format
                     database.GetBitmapByIndex(index).Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
 
-                    // Convert the MemoryStream to a byte array
                     byte[] imageBytes = memoryStream.ToArray();
 
-                    // Convert the byte array to a base64 encoded string
-                    bitmap = Convert.ToBase64String(imageBytes);
+                    bitmapString = Convert.ToBase64String(imageBytes);
                 }
-                // bitmap = database.GetBitmapByIndex(index);
             }
             catch (IndexOutOfRangeException)
             {
                 IndexFault indexFault = new IndexFault();
                 indexFault.Message = "Index Out of Bound";
                 throw new FaultException<IndexFault>(indexFault);
+            }
+            catch (Exception ex)
+            {
+                BitmapFault bitmapFault = new BitmapFault();
+                bitmapFault.Message = "Error while encoding the bitmap\n" + ex.Message;
+                throw new FaultException<BitmapFault>(bitmapFault);
             }
         }
     }

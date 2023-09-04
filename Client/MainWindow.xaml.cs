@@ -58,35 +58,23 @@ namespace Client
             {
                 index = Int32.Parse(indexBox.Text);
 
-                if (index >= 0 && index < foob.GetNumEntries())
+                foob.GetValuesForEntry(index, out acct, out pin, out bal, out fName, out lName, out bitmapString);
+
+                fNameBox.Text = fName;
+                lNameBox.Text = lName;
+                accNoBox.Text = acct.ToString();
+                pinBox.Text = pin.ToString("D4");
+                balBox.Text = bal.ToString("C");
+
+                if (bitmapString != null)
                 {
-
-                    foob.GetValuesForEntry(index, out acct, out pin, out bal, out fName, out lName, out bitmapString);
-
-                    fNameBox.Text = fName;
-                    lNameBox.Text = lName;
-                    accNoBox.Text = acct.ToString();
-                    pinBox.Text = pin.ToString("D4");
-                    balBox.Text = bal.ToString("C");
-
-                    if (bitmapString != null)
-                    {
-                        displayProfilePic(bitmapString);
-                    }
-
+                    displayProfilePic(bitmapString);
                 }
-                else
-                {
-                    throw new Exception("Invalid Index");
-                }
+
             }
             catch (FaultException<IndexFault> ex)
             {
-                MessageBox.Show(ex.Message);
-            }
-            catch (FaultException<BitmapFault> ex)
-            {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Detail.Message);
             }
             catch (Exception ex)
             {
